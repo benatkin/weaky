@@ -1,0 +1,6 @@
+%p
+  There are several pages named
+  %b= @items.first.name
+  - @items.each do |item|
+    %p
+      %a{ :href => item.id_url }= item.id

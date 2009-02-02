@@ -1,0 +1,12 @@
+%form{ :method => 'post', :action => @action }
+  %p
+    %input{ :type => 'text', :name => 'name', :value => @item.name }
+    %input{ :type => 'hidden', :name => 'id', :value => @item.id }
+  %p
+    %textarea{ :name => 'body' }= @item.body
+  %p
+    %input{ :type => 'submit', :value => 'save' }
+- if @item.delete_url
+  %form{ :method => 'post', :action => @item.delete_url }
+    %p
+      %input{ :type => 'submit', :value => 'delete' }
