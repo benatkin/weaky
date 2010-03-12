@@ -1,0 +1,5 @@
+%p
+- @items.each do |item|
+  %p
+    %a{ :href => item.url }= item.name
+

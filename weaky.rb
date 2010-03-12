@@ -65,6 +65,11 @@ class Weaky < Sinatra::Base
     sass :stylesheet
   end
 
+  get '/items/all' do
+    @items = Item.all
+    haml :all
+  end
+
   get '/new/:name' do
     @item = Item.new(:name => params[:name])
     @action = '/save'
