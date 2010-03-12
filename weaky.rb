@@ -3,6 +3,7 @@ require 'sinatra'
 require 'couchrest'
 require 'maruku'
 require 'haml'
+require 'sass'
 
 $weaky = CouchRest.database!('http://localhost:5984/weaky')
 
@@ -41,12 +42,8 @@ class Item < CouchRest::ExtendedDocument
     '/' + name
   end
 
-  def id_url(rev = nil)
-    "/id/#{id}" + (rev ? "/#{rev}" : "")
-  end
-
-  def revs_url
-    "/revs/#{id}"
+  def id_url
+    "/id/#{id}"
   end
 
   def edit_url
@@ -98,16 +95,6 @@ class Weaky < Sinatra::Base
   get '/id/:id' do
     @item = Item.get(params[:id])
     haml :show
-  end
-
-  get '/id/:id/:rev' do
-    @item = Item.get(params[:id], params[:rev])
-    haml :show
-  end
-
-  get '/revs/:id' do
-    @item = Item.get(params[:id], true)
-    haml :revisions
   end
 
   get '/edit/:id' do
