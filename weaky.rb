@@ -2,12 +2,16 @@ require 'rubygems'
 require 'sinatra'
 require 'couchrest'
 require 'maruku'
+require 'haml'
 
-CouchRest::Model.default_database = CouchRest.database!('weaky')
+$weaky = CouchRest.database!('http://localhost:5984/weaky')
 
-class Item < CouchRest::Model
-  key_accessor :name, :body
+class Item < CouchRest::ExtendedDocument
+  use_database $weaky
   view_by :name
+
+  property :name
+  property :body
 
   WIKI_LINK_REGEX = /\[\[[A-Za-z0-9_\- ]+\]\]/
   ESCAPE_FOR_MARUKU = /[\[\]]/
@@ -54,74 +58,79 @@ class Item < CouchRest::Model
   end
 end
 
-get '/' do
-  redirect '/home'
-end
+class Weaky < Sinatra::Base
+  get '/' do
+    redirect '/home'
+  end
 
-get '/new/:name' do
-  @item = Item.new(:name => params[:name])
-  @action = '/save'
-  haml :edit
-end
+  get '/stylesheet.css' do
+    content_type 'text/css', :charset => 'utf-8'
+    sass :stylesheet
+  end
 
-post '/save' do
-  item = Item.new(:name => params[:name], :body => params[:body])
-  item.save
-  redirect item.url
-end
-
-get '/:name' do
-  items = Item.by_name(:key => params[:name])
-  if items.count == 1 then
-    @item = items.first
-    haml :show
-  elsif items.count == 0 then
+  get '/new/:name' do
     @item = Item.new(:name => params[:name])
-    redirect @item.new_url
-  else
-    @items = items
-    @title = "disambiguation"
-    haml :disambiguation
+    @action = '/save'
+    haml :edit
+  end
+
+  post '/save' do
+    item = Item.new(:name => params[:name], :body => params[:body])
+    item.save
+    redirect item.url
+  end
+
+  get '/:name' do
+    items = Item.by_name(:key => params[:name])
+    if items.count == 1 then
+      @item = items.first
+      haml :show
+    elsif items.count == 0 then
+      @item = Item.new(:name => params[:name])
+      redirect @item.new_url
+    else
+      @items = items
+      @title = "disambiguation"
+      haml :disambiguation
+    end
+  end
+
+  get '/id/:id' do
+    @item = Item.get(params[:id])
+    haml :show
+  end
+
+  get '/id/:id/:rev' do
+    @item = Item.get(params[:id], params[:rev])
+    haml :show
+  end
+
+  get '/revs/:id' do
+    @item = Item.get(params[:id], true)
+    haml :revisions
+  end
+
+  get '/edit/:id' do
+    @item = Item.get(params[:id])
+    @action = @item.id_url
+    haml :edit
+  end
+
+  post '/id/:id' do
+    item = Item.get(params[:id])
+    item.name = params[:name]
+    item.body = params[:body]
+    item.save
+    redirect item.url
+  end
+
+  post '/delete/:id' do
+    item = Item.get(params[:id])
+    url = item.url
+    item.destroy
+    redirect url
   end
 end
 
-get '/id/:id' do
-  @item = Item.get(params[:id])
-  haml :show
-end
+Weaky.run!
 
-get '/id/:id/:rev' do
-  @item = Item.get(params[:id], params[:rev])
-  haml :show
-end
-
-get '/revs/:id' do
-  @item = Item.get(params[:id], true)
-  haml :revisions
-end
-
-get '/edit/:id' do
-  @item = Item.get(params[:id])
-  @action = @item.id_url
-  haml :edit
-end
-
-post '/id/:id' do
-  item = Item.get(params[:id])
-  item.name = params[:name]
-  item.body = params[:body]
-  item.save
-  redirect item.url
-end
-
-post '/delete/:id' do
-  item = Item.get(params[:id])
-  url = item.url
-  item.destroy
-  redirect url
-end
-
-get '/stylesheet.css' do
-  header 'Content-Type' => 'text/css; charset=utf-8'
-  sass :stylesheet
-end
