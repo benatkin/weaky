@@ -16,3 +16,7 @@ A basic CouchDB/Sinatra wiki.
 ## Missing
 
 - versions
+
+## License
+
+Copyright (c) 2009-2010 Ben Atkin. Licensed under the terms of the MIT license.
