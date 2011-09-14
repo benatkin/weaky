@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'sinatra'
 require 'couchrest'
+require 'couchrest_extended_document'
 require 'maruku'
 require 'haml'
 require 'sass'
