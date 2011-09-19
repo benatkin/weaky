@@ -60,9 +60,9 @@ class Weaky < Sinatra::Base
     redirect '/home'
   end
 
-  get '/stylesheet.css' do
+  get '/:name.css' do
     content_type 'text/css', :charset => 'utf-8'
-    sass :stylesheet
+  	sass :"/#{params[:name]}"
   end
 
   get '/items/all' do
