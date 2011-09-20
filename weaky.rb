@@ -5,7 +5,7 @@ require 'maruku'
 require 'haml'
 require 'sass'
 
-$weaky = CouchRest.database!('http://localhost:5984/weaky')
+$weaky = CouchRest.database!("http://#{ARGV[0].to_s.gsub("http://","")}")
 
 class Item < CouchRest::ExtendedDocument
   use_database $weaky
