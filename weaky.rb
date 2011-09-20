@@ -6,7 +6,7 @@ require 'maruku'
 require 'haml'
 require 'sass'
 
-$weaky = CouchRest.database!('http://localhost:5984/weaky')
+$weaky = CouchRest.database!("http://#{ARGV[0].to_s.gsub("http://","")}")
 
 class Item < CouchRest::ExtendedDocument
   use_database $weaky
@@ -61,9 +61,9 @@ class Weaky < Sinatra::Base
     redirect '/home'
   end
 
-  get '/stylesheet.css' do
+  get '/:name.css' do
     content_type 'text/css', :charset => 'utf-8'
-    sass :stylesheet
+  	sass :"/#{params[:name]}"
   end
 
   get '/items/all' do

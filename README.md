@@ -4,9 +4,9 @@ A basic CouchDB/Sinatra wiki.
 
 ## Installation
 
-1. Install CouchDB and run it on the default port
+1. Install CouchDB
 2. Install sinatra, CouchRest, and maruku
-3. Run `ruby weaky.rb`
+3. Run 'ruby weaky.rb localhost:5984/weaky'
 
 ## Features
 
