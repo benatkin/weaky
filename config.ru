@@ -1,3 +1,3 @@
-require 'weaky'
+require './weaky'
 
 run Sinatra::Application
