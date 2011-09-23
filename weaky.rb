@@ -125,5 +125,3 @@ class Weaky < Sinatra::Base
   end
 end
 
-Weaky.run!
-
