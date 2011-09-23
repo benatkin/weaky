@@ -63,7 +63,7 @@ class Weaky < Sinatra::Base
 
   get '/:name.css' do
     content_type 'text/css', :charset => 'utf-8'
-  	sass :"/#{params[:name]}"
+    sass :"/#{params[:name]}"
   end
 
   get '/items/all' do
