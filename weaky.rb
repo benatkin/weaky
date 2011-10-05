@@ -9,7 +9,7 @@ require 'sass'
 $couch_url = nil
 if ENV['COUCH_URL']
   $couch_url = ENV['COUCH_URL']
-elsif 
+elsif ARGV[0]
   $couch_url = 'http://' + ARGV[0].to_s.gsub(/^http:\/\//,"")
 else
   puts 'Usage:'
@@ -17,6 +17,7 @@ else
   puts '  ruby weaky.rb localhost:5984/weaky'
   puts
   puts  ' Or set the environment variable COUCH_URL to the database URL'
+  exit 1
 end
 $weaky = CouchRest.database!($couch_url)
 
