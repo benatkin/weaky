@@ -1,12 +1,24 @@
 require 'rubygems'
-require 'sinatra'
+require 'sinatra/base'
 require 'couchrest'
 require 'couchrest_extended_document'
 require 'maruku'
 require 'haml'
 require 'sass'
 
-$weaky = CouchRest.database!(ENV['COUCH_URL'])
+$couch_url = nil
+if ENV['COUCH_URL']
+  $couch_url = ENV['COUCH_URL']
+elsif 
+  $couch_url = 'http://' + ARGV[0].to_s.gsub(/^http:\/\//,"")
+else
+  puts 'Usage:'
+  puts '  ruby weaky.rb http://localhost:5984/weaky'
+  puts '  ruby weaky.rb localhost:5984/weaky'
+  puts
+  puts  ' Or set the environment variable COUCH_URL to the database URL'
+end
+$weaky = CouchRest.database!($couch_url)
 
 class Item < CouchRest::ExtendedDocument
   use_database $weaky
@@ -123,5 +135,9 @@ class Weaky < Sinatra::Base
     item.destroy
     redirect url
   end
+end
+
+if __FILE__ == $0
+  Weaky.run!
 end
 
